@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Booking Form</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+<h1>Travel Booking Form</h1>
+
+<form id="bookingForm">
+
+<h3>Basic Details</h3>
+
+<div class="row">
+<div class="col">
+<label>Receipt No</label>
+<input type="text" name="receipt_no" id="receipt_no">
+</div>
+<div class="col">
+<label>Date</label>
+<input type="date" name="date" id="date">
+</div>
+</div>
+
+<div class="row">
+<div class="col">
+<label>Travel Route</label>
+<input type="text" name="route" id="route">
+</div>
+<div class="col">
+<label>Travel Date</label>
+<input type="date" name="travel_date" id="travel_date">
+</div>
+<div class="col">
+<label>Time</label>
+<select name="time" id="time">
+<option>Morning</option>
+<option>Afternoon</option>
+<option>Evening</option>
+</select>
+</div>
+</div>
+
+<label>Customer Name</label>
+<input type="text" name="customer_name" id="customer_name">
+
+<label>GST No</label>
+<input type="text" name="gst_no" id="gst_no">
+
+<label>Address</label>
+<textarea name="address" id="address"></textarea>
+
+<div class="row">
+<div class="col">
+<label>Mobile Number 1</label>
+<input type="text" name="mobile1" id="mobile1">
+</div>
+<div class="col">
+<label>Mobile Number 2</label>
+<input type="text" name="mobile2" id="mobile2">
+</div>
+</div>
+
+<h3>Passenger Details</h3>
+<table border="1">
+<tr><th>No</th><th>Passenger Name</th><th>Age</th></tr>
+<tr><td>1</td><td><input type="text" name="passenger1" id="passenger1"></td><td><input type="number" name="age1" id="age1"></td></tr>
+<tr><td>2</td><td><input type="text" name="passenger2" id="passenger2"></td><td><input type="number" name="age2" id="age2"></td></tr>
+<tr><td>3</td><td><input type="text" name="passenger3" id="passenger3"></td><td><input type="number" name="age3" id="age3"></td></tr>
+<tr><td>4</td><td><input type="text" name="passenger4" id="passenger4"></td><td><input type="number" name="age4" id="age4"></td></tr>
+<tr><td>5</td><td><input type="text" name="passenger5" id="passenger5"></td><td><input type="number" name="age5" id="age5"></td></tr>
+<tr><td>6</td><td><input type="text" name="passenger6" id="passenger6"></td><td><input type="number" name="age6" id="age6"></td></tr>
+<tr><td>7</td><td><input type="text" name="passenger7" id="passenger7"></td><td><input type="number" name="age7" id="age7"></td></tr>
+<tr><td>8</td><td><input type="text" name="passenger8" id="passenger8"></td><td><input type="number" name="age8" id="age8"></td></tr>
+</table>
+
+<h3>Bus Details</h3>
+
+<div class="row">
+<div class="col">
+<label>Bus Type</label>
+<select name="bus_type" id="bus_type">
+<option>2x2 Sleeper AC</option>
+<option>2x2 Sleeper Non AC</option>
+<option>2x2 Seating AC</option>
+<option>2x2 Seating Non AC</option>
+<option>3x2 Seating AC</option>
+<option>3x2 Seating Non AC</option>
+</select>
+</div>
+
+<div class="col">
+<label>Seat Number</label>
+<input type="text" name="seat_no" id="seat_no">
+</div>
+</div>
+
+<div class="row">
+<div class="col">
+<label>Total Seats</label>
+<input type="number" name="total_seats" id="total_seats">
+</div>
+<div class="col">
+<label>Fare Per Seat</label>
+<input type="number" name="fare" id="fare">
+</div>
+</div>
+
+<div class="row">
+<div class="col">
+<label>Total Amount</label>
+<input type="number" name="total_amount" id="total_amount">
+</div>
+<div class="col">
+<label>Advance Amount</label>
+<input type="number" name="advance" id="advance">
+</div>
+</div>
+
+<div class="row">
+<div class="col">
+<label>CGST</label>
+<input type="number" name="cgst" id="cgst">
+</div>
+<div class="col">
+<label>SGST</label>
+<input type="number" name="sgst" id="sgst">
+</div>
+</div>
+
+<div class="row">
+<div class="col">
+<label>Balance Amount</label>
+<input type="number" name="balance" id="balance" readonly>
+</div>
+</div>
+
+<button type="submit">Submit</button>
+
+</form>
+</div>
+
+<script>
+document.getElementById("date").valueAsDate = new Date();
+
+const total=document.getElementById("total_amount");
+const advance=document.getElementById("advance");
+const balance=document.getElementById("balance");
+
+function calculateBalance(){
+ balance.value=(parseFloat(total.value)||0)-(parseFloat(advance.value)||0);
+}
+total.addEventListener("input",calculateBalance);
+advance.addEventListener("input",calculateBalance);
+
+document.getElementById("bookingForm").addEventListener("submit",async function(e){
+e.preventDefault();
+
+const data={};
+document.querySelectorAll("#bookingForm input,#bookingForm textarea,#bookingForm select")
+.forEach(f=>data[f.name]=f.value);
+
+try{
+ const res=await fetch("https://script.google.com/macros/s/AKfycbxxQbwiM9peQ9GutBx1Mlw1Ym6S_bfKWUcQw3uXT-Ps3k00UyDAfR0lP7fsn7vCg5nUsA/exec",{
+ method:"POST",
+ body:JSON.stringify(data)
+ });
+
+ const txt=await res.text();
+ alert("Data saved successfully!");
+ this.reset();
+ document.getElementById("date").valueAsDate=new Date();
+ balance.value="";
+}catch(err){
+ console.error(err);
+ alert("Error saving data.");
+}
+});
+</script>
+</body>
+</html>
